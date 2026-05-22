@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OmniProductive | AI Post-Production Automation for Professional Video Workflows</title>
+    <meta
+      name="description"
+      content="OmniProductive is an AI workflow automation platform for professional video teams, focused on terminology-aware subtitle correction, failed-take detection, timeline intelligence, and reviewable post-production governance."
+    />
+    <link rel="canonical" href="https://www.omniproductive.com/" />
+    <meta property="og:title" content="OmniProductive | AI Post-Production Automation" />
+    <meta
+      property="og:description"
+      content="Clean technical subtitles, remove low-value segments, and manage reviewable AI post-production workflows."
+    />
+    <meta property="og:url" content="https://www.omniproductive.com/" />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#ffffff" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230f172a'/%3E%3Ccircle cx='24' cy='24' r='4' fill='%232563eb'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0f172a;
+        --muted: #475569;
+        --soft: #64748b;
+        --line: #e2e8f0;
+        --panel: #f8fafc;
+        --blue: #2563eb;
+        --white: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background: var(--white);
+        letter-spacing: 0;
+        overflow-x: hidden;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page-shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .focus-ring:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.35);
+        outline-offset: 3px;
+      }
+
+      .break-safe {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .nav-glass {
+        background: rgba(255, 255, 255, 0.94);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(14px);
+      }
+
+      .hero-grid {
+        min-height: 760px;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid var(--line);
+        background:
+          linear-gradient(to right, rgba(226, 232, 240, 0.74) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(226, 232, 240, 0.74) 1px, transparent 1px),
+          #ffffff;
+        background-size: 88px 88px;
+      }
+
+      .hero-grid::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background:
+          linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 35%, rgba(255, 255, 255, 0.62) 70%, #ffffff 100%),
+          linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 100%);
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 3;
+        padding-top: 9rem;
+        padding-bottom: 5rem;
+      }
+
+      .console-field {
+        position: absolute;
+        z-index: 1;
+        inset: 96px 0 auto auto;
+        width: min(780px, 64vw);
+        height: 560px;
+        border-left: 1px solid rgba(226, 232, 240, 0.92);
+        opacity: 0.96;
+      }
+
+      .timeline-row {
+        display: grid;
+        grid-template-columns: 108px minmax(0, 1fr) 72px;
+        min-height: 70px;
+        border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+      }
+
+      .timeline-label,
+      .status-cell {
+        display: flex;
+        align-items: center;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .timeline-label {
+        padding-left: 18px;
+        border-right: 1px solid rgba(226, 232, 240, 0.95);
+      }
+
+      .status-cell {
+        justify-content: center;
+        border-left: 1px solid rgba(226, 232, 240, 0.95);
+      }
+
+      .timeline-track {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 6px;
+        align-items: center;
+        padding: 12px;
+        background: rgba(248, 250, 252, 0.54);
+        min-width: 0;
+      }
+
+      .clip {
+        height: 18px;
+        border: 1px solid var(--line);
+        background: #ffffff;
+        min-width: 0;
+      }
+
+      .clip.blue {
+        border-color: rgba(37, 99, 235, 0.28);
+        background: rgba(37, 99, 235, 0.08);
+      }
+
+      .clip.cut {
+        background:
+          repeating-linear-gradient(
+            135deg,
+            rgba(15, 23, 42, 0.06),
+            rgba(15, 23, 42, 0.06) 3px,
+            transparent 3px,
+            transparent 7px
+          ),
+          #ffffff;
+      }
+
+      .section-pad {
+        padding: 104px 0;
+      }
+
+      .rule-heading {
+        display: grid;
+        grid-template-columns: 124px minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      .section-kicker {
+        color: var(--blue);
+        font-size: 12px;
+        line-height: 1;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-top: 1px solid var(--line);
+        border-left: 1px solid var(--line);
+      }
+
+      .capability-card {
+        min-height: 310px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        background: #ffffff;
+        transition: background 180ms ease, transform 180ms ease;
+      }
+
+      .capability-card:hover {
+        background: #f8fafc;
+        transform: translateY(-2px);
+      }
+
+      .architecture-card,
+      .price-card,
+      .contact-card,
+      .legal-card {
+        border: 1px solid var(--line);
+        background: #ffffff;
+      }
+
+      .topology {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border: 1px solid var(--line);
+        background: #ffffff;
+      }
+
+      .topology-node {
+        min-height: 116px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        min-width: 0;
+      }
+
+      .topology-node:nth-child(3n) {
+        border-right: 0;
+      }
+
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        align-items: stretch;
+      }
+
+      .price-card {
+        min-height: 468px;
+      }
+
+      .price-card.featured {
+        border: 2px solid var(--ink);
+        transform: scale(1.02);
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+      }
+
+      .pricing-copy {
+        min-height: 72px;
+      }
+
+      .contact-meta {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .contact-meta-cell {
+        min-width: 0;
+        padding: 1.5rem;
+        border-right: 1px solid var(--line);
+      }
+
+      .contact-meta-cell:last-child {
+        border-right: 0;
+      }
+
+      .contact-meta-value {
+        display: block;
+        max-width: 100%;
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+        line-height: 1.5;
+      }
+
+      .legal-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .legal-link {
+        min-width: 0;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+
+      .legal-link:hover {
+        color: var(--blue);
+      }
+
+      @media (max-width: 1100px) {
+        .card-grid,
+        .pricing-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .price-card.featured {
+          transform: none;
+        }
+
+        .console-field {
+          width: 70vw;
+          height: 430px;
+          inset: auto 0 0 auto;
+          opacity: 0.42;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .desktop-nav {
+          display: none;
+        }
+
+        .page-shell {
+          width: min(100% - 24px, 1180px);
+        }
+
+        .hero-grid {
+          min-height: 760px;
+          background-size: 64px 64px;
+        }
+
+        .hero-content {
+          padding-top: 72px;
+          padding-bottom: 48px;
+        }
+
+        .hero-title {
+          font-size: 2.55rem;
+          line-height: 1.08;
+        }
+
+        .hero-copy {
+          font-size: 1.08rem;
+          line-height: 1.62;
+        }
+
+        .console-field {
+          width: 100vw;
+          height: 350px;
+          inset: auto 0 0 auto;
+          opacity: 0.16;
+        }
+
+        .timeline-row {
+          grid-template-columns: 82px minmax(0, 1fr) 52px;
+          min-height: 58px;
+        }
+
+        .timeline-label,
+        .status-cell {
+          font-size: 9px;
+        }
+
+        .timeline-track {
+          gap: 4px;
+          padding: 8px;
+        }
+
+        .rule-heading {
+          grid-template-columns: 1fr;
+          gap: 14px;
+        }
+
+        .card-grid,
+        .pricing-grid,
+        .topology,
+        .contact-meta,
+        .legal-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topology-node,
+        .topology-node:nth-child(3n),
+        .contact-meta-cell {
+          border-right: 0;
+        }
+
+        .contact-meta-cell {
+          border-bottom: 1px solid var(--line);
+        }
+
+        .contact-meta-cell:last-child {
+          border-bottom: 0;
+        }
+
+        .section-pad {
+          padding: 72px 0;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .hero-title {
+          font-size: 2.35rem;
+        }
+
+        .nav-cta {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+      }
+    </style>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "OmniProductive",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "url": "https://www.omniproductive.com/",
+        "email": "contact@omniproductive.com",
+        "description": "AI post-production automation for terminology-aware subtitle correction, failed-take detection, timeline intelligence, and reviewable content workflow governance.",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Starter",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          {
+            "@type": "Offer",
+            "name": "Professional",
+            "price": "89",
+            "priceCurrency": "USD"
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header class="nav-glass sticky top-0 z-50">
+      <div class="page-shell h-16 flex items-center justify-between gap-4">
+        <a href="#top" class="focus-ring font-bold text-xl whitespace-nowrap" aria-label="OmniProductive home">
+          OmniProductive<span style="color: var(--blue)">.</span>
+        </a>
+
+        <nav class="desktop-nav flex items-center justify-center gap-9 text-sm font-medium text-gray-600" aria-label="Primary navigation">
+          <a class="hover:text-gray-900 focus-ring" href="#features">Features</a>
+          <a class="hover:text-gray-900 focus-ring" href="#architecture">Architecture</a>
+          <a class="hover:text-gray-900 focus-ring" href="#pricing">Pricing</a>
+          <a class="hover:text-gray-900 focus-ring" href="#contact">Contact</a>
+        </nav>
+
+        <a
+          href="#contact"
+          class="nav-cta focus-ring inline-flex h-10 items-center justify-center bg-gray-900 px-5 text-sm font-semibold text-white hover:bg-blue-600 whitespace-nowrap"
+        >
+          <span class="hidden sm:inline">Access Console / 进入控制台</span>
+          <span class="sm:hidden">Console</span>
+        </a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero-grid">
+        <div class="console-field" aria-hidden="true">
+          <div class="timeline-row">
+            <div class="timeline-label">Transcript</div>
+            <div class="timeline-track">
+              <span class="clip blue" style="grid-column: span 3"></span>
+              <span class="clip" style="grid-column: span 2"></span>
+              <span class="clip cut" style="grid-column: span 1"></span>
+              <span class="clip blue" style="grid-column: span 4"></span>
+              <span class="clip" style="grid-column: span 2"></span>
+            </div>
+            <div class="status-cell">Clean</div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-label">Terms</div>
+            <div class="timeline-track">
+              <span class="clip" style="grid-column: span 2"></span>
+              <span class="clip blue" style="grid-column: span 4"></span>
+              <span class="clip" style="grid-column: span 1"></span>
+              <span class="clip blue" style="grid-column: span 3"></span>
+              <span class="clip" style="grid-column: span 2"></span>
+            </div>
+            <div class="status-cell">98.6%</div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-label">Audio</div>
+            <div class="timeline-track">
+              <span class="clip" style="grid-column: span 1"></span>
+              <span class="clip cut" style="grid-column: span 2"></span>
+              <span class="clip blue" style="grid-column: span 5"></span>
+              <span class="clip" style="grid-column: span 1"></span>
+              <span class="clip blue" style="grid-column: span 3"></span>
+            </div>
+            <div class="status-cell">Trim</div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-label">Review</div>
+            <div class="timeline-track">
+              <span class="clip blue" style="grid-column: span 2"></span>
+              <span class="clip" style="grid-column: span 2"></span>
+              <span class="clip blue" style="grid-column: span 2"></span>
+              <span class="clip cut" style="grid-column: span 2"></span>
+              <span class="clip blue" style="grid-column: span 4"></span>
+            </div>
+            <div class="status-cell">Audit</div>
+          </div>
+          <div class="timeline-row">
+            <div class="timeline-label">Export</div>
+            <div class="timeline-track">
+              <span class="clip" style="grid-column: span 2"></span>
+              <span class="clip blue" style="grid-column: span 3"></span>
+              <span class="clip" style="grid-column: span 2"></span>
+              <span class="clip blue" style="grid-column: span 5"></span>
+            </div>
+            <div class="status-cell">Ready</div>
+          </div>
+        </div>
+
+        <div class="page-shell hero-content">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center border border-gray-300 bg-white px-3 py-2 text-xs font-semibold uppercase text-blue-600">
+              Deploying AI Post-Production Workflows for Production
+            </div>
+            <h1 class="hero-title mt-10 text-5xl sm:text-6xl md:text-7xl font-bold leading-none">
+              AI post-production automation for professional video workflows.
+            </h1>
+            <p class="hero-copy mt-8 max-w-2xl text-xl md:text-2xl font-light leading-relaxed text-gray-600">
+              OmniProductive helps technical content teams clean terminology-heavy subtitles, remove low-value recording segments, detect failed takes, and prepare reviewable publish-ready assets through cloud-ready AI workflow orchestration.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row gap-3">
+              <a
+                href="#pricing"
+                class="focus-ring inline-flex h-12 items-center justify-center bg-gray-900 px-7 text-sm font-semibold text-white hover:bg-blue-600"
+              >
+                Start Free Trial
+              </a>
+              <a
+                href="#contact"
+                class="focus-ring inline-flex h-12 items-center justify-center border border-gray-900 bg-white px-7 text-sm font-semibold text-gray-900 hover:border-blue-600 hover:text-blue-600"
+              >
+                Request Workflow Demo
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="section-pad bg-white">
+        <div class="page-shell">
+          <div class="rule-heading">
+            <p class="section-kicker">01 / Features</p>
+            <div>
+              <h2 class="max-w-4xl text-4xl md:text-5xl font-bold leading-tight">
+                Built for editors, course teams, and B2B video operations that cannot afford sloppy subtitles.
+              </h2>
+              <p class="mt-5 max-w-3xl text-lg font-light leading-relaxed text-gray-600">
+                The platform turns transcription, cleanup, timeline review, and export decisions into an auditable AI-assisted production system.
+              </p>
+            </div>
+          </div>
+
+          <div class="card-grid mt-14">
+            <article class="capability-card p-7">
+              <p class="text-xs font-bold uppercase text-blue-600">Card 01</p>
+              <h3 class="mt-8 text-2xl font-semibold leading-tight">Terminology-Aware Subtitle Correction</h3>
+              <p class="mt-5 text-sm leading-7 text-gray-600">
+                Corrects product names, framework terms, acronyms, speaker-specific vocabulary, and context-sensitive technical phrases before inaccurate subtitles reach customers, students, or internal teams.
+              </p>
+            </article>
+
+            <article class="capability-card p-7">
+              <p class="text-xs font-bold uppercase text-blue-600">Card 02</p>
+              <h3 class="mt-8 text-2xl font-semibold leading-tight">Filler & Failed-Take Detection</h3>
+              <p class="mt-5 text-sm leading-7 text-gray-600">
+                Flags repeated explanations, long pauses, filler language, false starts, and obvious recording failures so producers can remove low-value segments without scanning every second manually.
+              </p>
+            </article>
+
+            <article class="capability-card p-7">
+              <p class="text-xs font-bold uppercase text-blue-600">Card 03</p>
+              <h3 class="mt-8 text-2xl font-semibold leading-tight">Multi-Modal Timeline Intelligence</h3>
+              <p class="mt-5 text-sm leading-7 text-gray-600">
+                Aligns transcript semantics, audio energy, timestamp confidence, caption boundaries, and scene-level metadata to create practical edit decisions instead of isolated text suggestions.
+              </p>
+            </article>
+
+            <article class="capability-card p-7">
+              <p class="text-xs font-bold uppercase text-blue-600">Card 04</p>
+              <h3 class="mt-8 text-2xl font-semibold leading-tight">Reviewable Governance Layer</h3>
+              <p class="mt-5 text-sm leading-7 text-gray-600">
+                Keeps correction history, prompt versions, export events, reviewer actions, and telemetry controls visible for content teams that need accountable AI assistance across recurring production runs.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="section-pad bg-gray-50 border-t border-b border-gray-200">
+        <div class="page-shell">
+          <div class="rule-heading">
+            <p class="section-kicker">02 / Architecture</p>
+            <div>
+              <h2 class="max-w-4xl text-4xl md:text-5xl font-bold leading-tight">
+                Cloud-ready orchestration for transcript refinement, timeline decisions, and human review.
+              </h2>
+              <p class="mt-5 max-w-3xl text-lg font-light leading-relaxed text-gray-600">
+                OmniProductive is designed for provider-ready deployment patterns across Amazon Bedrock, Google Vertex AI, and Microsoft Azure AI environments, with model routing selected by each customer workspace.
+              </p>
+            </div>
+          </div>
+
+          <div class="architecture-card mt-14">
+            <div class="grid lg:grid-cols-5">
+              <div class="lg:col-span-2 p-8 md:p-10 border-b lg:border-b-0 lg:border-r border-gray-200">
+                <p class="text-xs font-bold uppercase text-blue-600">Connectivity Card</p>
+                <h3 class="mt-8 text-3xl font-bold leading-tight">
+                  Provider-neutral AI processing with prompt caching and review controls.
+                </h3>
+                <p class="mt-5 text-base leading-8 text-gray-600">
+                  The processing layer separates media ingestion, speech-to-text output, LLM-based transcript refinement, prompt cache reuse, timeline scoring, and final reviewer approval. Teams can keep automated decisions explainable while moving high-volume content through a low-latency cloud pipeline.
+                </p>
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+                  <div class="border border-gray-200 bg-gray-50 p-4">
+                    <p class="font-semibold">Prompt Caching</p>
+                    <p class="mt-2 text-gray-500">Reusable term banks, style rules, and workflow prompts.</p>
+                  </div>
+                  <div class="border border-gray-200 bg-gray-50 p-4">
+                    <p class="font-semibold">Telemetry Control</p>
+                    <p class="mt-2 text-gray-500">Workspace logs for review, export, and operator actions.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="lg:col-span-3 p-8 md:p-10 min-w-0">
+                <div class="topology">
+                  <div class="topology-node p-5">
+                    <p class="text-xs font-bold uppercase text-gray-400">Input</p>
+                    <p class="mt-5 text-lg font-semibold">Video & Audio Assets</p>
+                    <p class="mt-2 text-sm text-gray-500">MP4, WAV, SRT, VTT, transcript JSON.</p>
+                  </div>
+                  <div class="topology-node p-5">
+                    <p class="text-xs font-bold uppercase text-gray-400">Pipeline</p>
+                    <p class="mt-5 text-lg font-semibold">Speech & Caption Normalization</p>
+                    <p class="mt-2 text-sm text-gray-500">Timestamp alignment and caption boundary cleanup.</p>
+                  </div>
+                  <div class="topology-node p-5">
+                    <p class="text-xs font-bold uppercase text-gray-400">Cloud AI</p>
+                    <p class="mt-5 text-lg font-semibold">Amazon Bedrock Ready</p>
+                    <p class="mt-2 text-sm text-gray-500">Managed model routing for content workloads.</p>
+                  </div>
+                  <div class="topology-node p-5">
+                    <p class="text-xs font-bold uppercase text-gray-400">Cloud AI</p>
+                    <p class="mt-5 text-lg font-semibold">Google Vertex AI Ready</p>
+                    <p class="mt-2 text-sm text-gray-500">Gemini-compatible workflow deployment patterns.</p>
+                  </div>
+                  <div class="topology-node p-5">
+                    <p class="text-xs font-bold uppercase text-gray-400">Cloud AI</p>
+                    <p class="mt-5 text-lg font-semibold">Azure AI Ready</p>
+                    <p class="mt-2 text-sm text-gray-500">Enterprise identity and private network options.</p>
+                  </div>
+                  <div class="topology-node p-5">
+                    <p class="text-xs font-bold uppercase text-gray-400">Output</p>
+                    <p class="mt-5 text-lg font-semibold">Reviewable Edit Package</p>
+                    <p class="mt-2 text-sm text-gray-500">Subtitle files, cut lists, logs, and export metadata.</p>
+                  </div>
+                </div>
+
+                <div class="mt-6 border border-gray-200 bg-gray-50 p-5">
+                  <p class="text-sm leading-7 text-gray-600">
+                    Native prompt caching reduces repeated context cost for terminology dictionaries, brand style rules, recurring course modules, and reviewer preferences. This keeps repeated subtitle cleanup and timeline analysis faster while preserving a human-readable decision trail.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" class="section-pad bg-white">
+        <div class="page-shell">
+          <div class="rule-heading">
+            <p class="section-kicker">03 / Pricing</p>
+            <div>
+              <h2 class="max-w-4xl text-4xl md:text-5xl font-bold leading-tight">
+                Straightforward plans for creators, production teams, and enterprise content operations.
+              </h2>
+              <p class="mt-5 max-w-3xl text-lg font-light leading-relaxed text-gray-600">
+                Start with subtitle cleanup, then scale into batch workflows, term governance, reviewer queues, and private deployment.
+              </p>
+            </div>
+          </div>
+
+          <div class="pricing-grid mt-14">
+            <article class="price-card p-8">
+              <p class="text-xs font-bold uppercase text-gray-500">Starter</p>
+              <div class="mt-7 flex items-end gap-2">
+                <span class="text-5xl font-bold">$0</span>
+                <span class="mb-2 text-gray-500">/ month</span>
+              </div>
+              <p class="pricing-copy mt-5 text-sm leading-7 text-gray-600">
+                For individual creators validating automated subtitle correction and basic video cleanup workflows.
+              </p>
+              <ul class="mt-8 space-y-4 text-sm text-gray-700">
+                <li>One active workflow session</li>
+                <li>Basic terminology correction</li>
+                <li>Local project cache management</li>
+                <li>Manual review export</li>
+              </ul>
+              <a href="#contact" class="focus-ring mt-10 inline-flex h-11 w-full items-center justify-center border border-gray-900 text-sm font-semibold hover:border-blue-600 hover:text-blue-600">
+                Start Free Trial
+              </a>
+            </article>
+
+            <article class="price-card featured p-8">
+              <div class="flex items-center justify-between gap-4">
+                <p class="text-xs font-bold uppercase text-blue-600">Professional</p>
+                <span class="border border-blue-600 px-2 py-1 text-xs font-semibold text-blue-600">Most Selected</span>
+              </div>
+              <div class="mt-7 flex items-end gap-2">
+                <span class="text-5xl font-bold">$89</span>
+                <span class="mb-2 text-gray-500">/ month</span>
+              </div>
+              <p class="pricing-copy mt-5 text-sm leading-7 text-gray-600">
+                For professional video teams that need repeatable AI-assisted cleanup, review queues, and export-ready deliverables.
+              </p>
+              <ul class="mt-8 space-y-4 text-sm text-gray-700">
+                <li>Unlimited parallel agent workflows</li>
+                <li>Advanced prompt caching for term banks</li>
+                <li>Failed-take and filler detection</li>
+                <li>Batch subtitle and timeline processing</li>
+                <li>Reviewer history and export logs</li>
+              </ul>
+              <a href="#contact" class="focus-ring mt-10 inline-flex h-11 w-full items-center justify-center bg-gray-900 text-sm font-semibold text-white hover:bg-blue-600">
+                Request Workflow Demo
+              </a>
+            </article>
+
+            <article class="price-card p-8">
+              <p class="text-xs font-bold uppercase text-gray-500">Enterprise</p>
+              <div class="mt-7 flex items-end gap-2">
+                <span class="text-5xl font-bold">Custom</span>
+              </div>
+              <p class="pricing-copy mt-5 text-sm leading-7 text-gray-600">
+                For education, SaaS, training, and enterprise media teams requiring private infrastructure and formal support.
+              </p>
+              <ul class="mt-8 space-y-4 text-sm text-gray-700">
+                <li>Private VPC deployment planning</li>
+                <li>Dedicated ERP or CMS integration SLA</li>
+                <li>Role-based review operations</li>
+                <li>Security and compliance contact channel</li>
+                <li>Custom retention and telemetry controls</li>
+              </ul>
+              <a href="mailto:contact@omniproductive.com" class="focus-ring mt-10 inline-flex h-11 w-full items-center justify-center border border-gray-900 text-sm font-semibold hover:border-blue-600 hover:text-blue-600">
+                Contact Operations
+              </a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="section-pad bg-gray-50 border-t border-gray-200">
+        <div class="page-shell">
+          <div class="grid lg:grid-cols-12 gap-8 items-start">
+            <div class="lg:col-span-5 min-w-0">
+              <p class="section-kicker">04 / Contact</p>
+              <h2 class="mt-8 text-4xl md:text-5xl font-bold leading-tight">
+                Direct Communication Node
+              </h2>
+              <p class="mt-5 text-lg font-light leading-relaxed text-gray-600">
+                Reach the OmniProductive team for product access, cloud architecture review, enterprise security questions, or implementation discussions.
+              </p>
+            </div>
+
+            <div class="lg:col-span-7 contact-card min-w-0">
+              <div class="p-8 md:p-10 border-b border-gray-200 min-w-0">
+                <p class="text-xs font-bold uppercase text-blue-600">OmniProductive Operations Desk</p>
+                <a
+                  href="mailto:contact@omniproductive.com"
+                  class="focus-ring mt-6 inline-flex max-w-full break-safe text-3xl md:text-4xl font-bold leading-tight text-gray-900 hover:text-blue-600"
+                >
+                  contact@omniproductive.com
+                </a>
+              </div>
+              <div class="contact-meta">
+                <div class="contact-meta-cell">
+                  <p class="text-xs font-bold uppercase text-gray-400">Domain</p>
+                  <p class="contact-meta-value mt-4 font-semibold">omniproductive.com</p>
+                </div>
+                <div class="contact-meta-cell">
+                  <p class="text-xs font-bold uppercase text-gray-400">Official Site</p>
+                  <a class="contact-meta-value mt-4 font-semibold hover:text-blue-600" href="https://www.omniproductive.com/">
+                    www.omniproductive.com
+                  </a>
+                </div>
+                <div class="contact-meta-cell">
+                  <p class="text-xs font-bold uppercase text-gray-400">Response Scope</p>
+                  <p class="contact-meta-value mt-4 font-semibold">Product, security, and cloud review</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="legal-card legal-grid mt-10" aria-label="Legal and compliance links">
+            <a id="privacy" href="privacy.html" class="legal-link p-6 border-b md:border-b-0 md:border-r border-gray-200">
+              <span class="block text-xs font-bold uppercase text-gray-400">Legal</span>
+              <span class="mt-3 block font-semibold">Privacy Policy</span>
+            </a>
+            <a id="terms" href="terms.html" class="legal-link p-6 border-b md:border-b-0 md:border-r border-gray-200">
+              <span class="block text-xs font-bold uppercase text-gray-400">Legal</span>
+              <span class="mt-3 block font-semibold">Terms of Service</span>
+            </a>
+            <a id="security" href="mailto:contact@omniproductive.com?subject=Security%20and%20Compliance%20Contact" class="legal-link p-6">
+              <span class="block text-xs font-bold uppercase text-gray-400">Security</span>
+              <span class="mt-3 block font-semibold">Security/Compliance Contact</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-gray-200 bg-white">
+      <div class="page-shell py-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5">
+        <p class="break-safe text-sm text-gray-500">
+          © 2026 OmniProductive. All rights reserved. Built for global distributed automated governance ecosystems.
+        </p>
+        <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm">
+          <a class="legal-link" href="privacy.html">Privacy Policy</a>
+          <a class="legal-link" href="terms.html">Terms of Service</a>
+          <a class="legal-link" href="mailto:contact@omniproductive.com?subject=Security%20and%20Compliance%20Contact">Security/Compliance Contact</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
