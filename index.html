@@ -431,25 +431,57 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "SoftwareApplication",
-        "name": "OmniProductive",
-        "applicationCategory": "BusinessApplication",
-        "operatingSystem": "Web",
-        "url": "https://www.omniproductive.com/",
-        "email": "contact@omniproductive.com",
-        "description": "AI post-production automation for terminology-aware subtitle correction, failed-take detection, timeline intelligence, and reviewable content workflow governance.",
-        "offers": [
+        "@graph": [
           {
-            "@type": "Offer",
-            "name": "Starter",
-            "price": "0",
-            "priceCurrency": "USD"
+            "@type": "Organization",
+            "@id": "https://www.omniproductive.com/#organization",
+            "name": "OmniProductive",
+            "url": "https://www.omniproductive.com/",
+            "email": "contact@omniproductive.com",
+            "founder": {
+              "@id": "https://www.omniproductive.com/#founder"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "email": "contact@omniproductive.com",
+              "contactType": "Product, security, and cloud review"
+            }
           },
           {
-            "@type": "Offer",
-            "name": "Professional",
-            "price": "89",
-            "priceCurrency": "USD"
+            "@type": "Person",
+            "@id": "https://www.omniproductive.com/#founder",
+            "name": "YongLin Bai",
+            "jobTitle": "Founder & CTO",
+            "worksFor": {
+              "@id": "https://www.omniproductive.com/#organization"
+            }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.omniproductive.com/#software",
+            "name": "OmniProductive",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "url": "https://www.omniproductive.com/",
+            "email": "contact@omniproductive.com",
+            "creator": {
+              "@id": "https://www.omniproductive.com/#organization"
+            },
+            "description": "AI post-production automation for terminology-aware subtitle correction, failed-take detection, timeline intelligence, and reviewable content workflow governance.",
+            "offers": [
+              {
+                "@type": "Offer",
+                "name": "Starter",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              {
+                "@type": "Offer",
+                "name": "Professional",
+                "price": "89",
+                "priceCurrency": "USD"
+              }
+            ]
           }
         ]
       }
@@ -822,12 +854,38 @@
             </div>
           </div>
 
+          <div class="legal-card mt-10" aria-label="Company verification details">
+            <div class="p-8 md:p-10 border-b border-gray-200">
+              <p class="text-xs font-bold uppercase text-blue-600">Company Verification</p>
+              <h3 class="mt-6 text-3xl font-bold leading-tight">OmniProductive company and product status</h3>
+              <p class="mt-5 max-w-4xl text-base leading-8 text-gray-600">
+                OmniProductive is an early-stage SaaS product founded by YongLin Bai, Founder & CTO. The company is building AI post-production automation for professional video workflows, focused on terminology-aware subtitle correction, failed-take detection, multi-modal timeline analysis, and reviewable editing operations.
+              </p>
+            </div>
+            <div class="contact-meta">
+              <div class="contact-meta-cell">
+                <p class="text-xs font-bold uppercase text-gray-400">Founder</p>
+                <p class="contact-meta-value mt-4 font-semibold">YongLin Bai, Founder & CTO</p>
+              </div>
+              <div class="contact-meta-cell">
+                <p class="text-xs font-bold uppercase text-gray-400">Product Stage</p>
+                <p class="contact-meta-value mt-4 font-semibold">Early-stage SaaS / MVP in development</p>
+              </div>
+              <div class="contact-meta-cell">
+                <p class="text-xs font-bold uppercase text-gray-400">Official Contact</p>
+                <a class="contact-meta-value mt-4 font-semibold hover:text-blue-600" href="mailto:contact@omniproductive.com">
+                  contact@omniproductive.com
+                </a>
+              </div>
+            </div>
+          </div>
+
           <div class="legal-card legal-grid mt-10" aria-label="Legal and compliance links">
-            <a id="privacy" href="privacy.html" class="legal-link p-6 border-b md:border-b-0 md:border-r border-gray-200">
+            <a id="privacy" href="https://www.omniproductive.com/privacy.html" class="legal-link p-6 border-b md:border-b-0 md:border-r border-gray-200">
               <span class="block text-xs font-bold uppercase text-gray-400">Legal</span>
               <span class="mt-3 block font-semibold">Privacy Policy</span>
             </a>
-            <a id="terms" href="terms.html" class="legal-link p-6 border-b md:border-b-0 md:border-r border-gray-200">
+            <a id="terms" href="https://www.omniproductive.com/terms.html" class="legal-link p-6 border-b md:border-b-0 md:border-r border-gray-200">
               <span class="block text-xs font-bold uppercase text-gray-400">Legal</span>
               <span class="mt-3 block font-semibold">Terms of Service</span>
             </a>
@@ -846,8 +904,8 @@
           © 2026 OmniProductive. All rights reserved. Built for global distributed automated governance ecosystems.
         </p>
         <div class="flex flex-wrap gap-x-6 gap-y-3 text-sm">
-          <a class="legal-link" href="privacy.html">Privacy Policy</a>
-          <a class="legal-link" href="terms.html">Terms of Service</a>
+          <a class="legal-link" href="https://www.omniproductive.com/privacy.html">Privacy Policy</a>
+          <a class="legal-link" href="https://www.omniproductive.com/terms.html">Terms of Service</a>
           <a class="legal-link" href="mailto:contact@omniproductive.com?subject=Security%20and%20Compliance%20Contact">Security/Compliance Contact</a>
         </div>
       </div>
